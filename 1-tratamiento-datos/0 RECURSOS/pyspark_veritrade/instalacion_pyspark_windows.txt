@@ -1,0 +1,132 @@
+--APLICACIONES--
+Python versión: 3.11.2
+Java: jdk-8u202-windows-x64
+Spark: spark-3.5.3-bin-hadoop3
+Winutils: hadoop 3.3.0 -> winutils.exe
+	  hadoop 3.3.6 - winutils.exe
+
+--CREACION DE CARPETAS--
+C:\Program Files\spark
+C:\Program Files\hadoop
+
+--VARIABLES DE ENTORNO--
+JAVA_HOME: C:\PROGRA~1\Java\jdk1.8.0_202
+HADOOP_HOME: C:\PROGRA~1\hadoop
+PYSPARK_PYTHON:C:\Users\aramos\AppData\Local\Programs\Python\Python311\python.exe
+SPARK_HOME: C:\PROGRA~1\spark
+
+#en path
+C:\Users\aramos\AppData\Local\Programs\Python\Python311\
+C:\Users\aramos\AppData\Local\Programs\Python\Python311\Scripts
+%JAVA_HOME%\bin
+%HADOOP_HOME%\bin
+%SPARK_HOME%\bin
+
+#en path de sistema:
+C:\Program Files\Java\jdk1.8.0_202\bin
+
+#EJEMPLO BÁSICO
+import findspark
+from pyspark.sql import SparkSession
+
+findspark.init()
+
+# Crear una sesión de Spark
+spark = SparkSession.builder \
+    .appName("Basic Example") \
+    .getOrCreate()
+
+# Crear un DataFrame simple
+data = [("Alice", 1), ("Bob", 2), ("Cathy", 3)]
+columns = ["Name", "Id"]
+
+df = spark.createDataFrame(data, columns)
+
+# Mostrar el DataFrame
+df.show()
+
+# Detener la sesión de Spark
+spark.stop()
+
+--INSTALACION DE HADOOP--
+DESCARGAR UN DESDE UN MIRROR DE APACHE : HADOOP 3.3.6
+DESCOMPRIMIR EL TAR.GZ CON PRIVILEGIOS DE ADMINISTRADOR
+COPIAR EL CONTENIDO DEL BIN DEL WINUTILS MASTER AL BIN DE HADOOP 3.3.6
+
+no olvidar dar permisos al usuario de escritura a la carpeta de hadoop y tratar de quitar el solo lectura
+
+* variables de entorno: %HADOOP_HOME%\sbin
+*hadoop-env.sh
+export JAVA_HOME=%JAVA_HOME%
+
+* etc/hadoop/core-site.xml
+<property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://localhost:9000</value>
+    </property>
+
+* etc/hadoop/hdfs-site.xml
+<property>
+        <name>dfs.replication</name>
+        <value>1</value>
+</property>
+<property>
+        <name>dfs.namenode.name.dir</name>
+        <value>file:///C:/PROGRA~1/hadoop/data/namenode</value>
+</property>
+<property>
+        <name>dfs.datanode.data.dir</name>
+        <value>file:///C:/PROGRA~1/hadoop/data/datanode</value>
+</property>
+
+*etc/hadoop/mapred-site.xml:
+<property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+    <property>
+        <name>mapreduce.application.classpath</name>
+        <value>$HADOOP_MAPRED_HOME/share/hadoop/mapreduce/*:$HADOOP_MAPRED_HOME/share/hadoop/mapreduce/lib/*</value>
+    </property>
+
+* etc/hadoop/yarn-site.xml
+<property>
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.env-whitelist</name>
+        <value>JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_HOME,PATH,LANG,TZ,HADOOP_MAPRED_HOME</value>
+    </property>
+
+--el formateo de namenode
+hdfs namenode -format
+
+--iniciar hadoop
+start-dfs.cmd
+start-yarn.cmd
+
+--comandos de hadoop
+* listar directorios
+hdfs dfs -ls /
+* creación de carpetas
+hdfs dfs -mkdir /alexander
+
+*remover directorios
+hdfs dfs -rm -r /alexander/test.csv
+
+SPARK Y HADOOP
+En la ruta C:\Program Files\spark\conf , del archivo spark-defaults.conf.template se hace una copia y se deja un nuevo archivo: spark-defaults.conf
+
+dentro de ese archivo se detalla al final del mismo estas dos líneas:
+# Configuración para usar HDFS
+spark.hadoop.fs.defaultFS=hdfs://localhost:9000
+
+en el código de pyspark considerar, una estructura como esta para guardarlo
+df.coalesce(1).write.csv("hdfs://localhost:9000/alexander/test.csv", header=True)
+
+*copiar archivos del hdfs al loca
+hdfs dfs -copyToLocal /alexander/test.csv "C:\Python Projects\optimizacion\test.csv"
+
+http://localhost:8088
+

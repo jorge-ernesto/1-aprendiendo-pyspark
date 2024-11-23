@@ -1,0 +1,22 @@
+---- Notas (Copia de documento de instalación de SuiteScript) ----
+
+- Videos
+    - https://youtu.be/11srr2u2JRE?feature=shared
+
+- Instalacion de Apache Spark y PySpark
+    - Prerequisitios
+        - JDK 21.0.5
+        - Python 3.11.8
+        - Apache Spark 3.5.3
+        - Hadoop 3.3.5
+    - Configurar variables de entorno
+        - %JAVA_HOME%\bin
+        - %SPARK_HOME%\bin
+        - %HADOOP_HOME%\bin
+    - Activar virtualizacion
+        - python -m venv <venv>
+        - <venv>\Scripts\activate.bat
+        - python -m venv venv
+        - venv\Scripts\activate
+    - Instalar PySpark
+        - pip install pyspark findspark
