@@ -1,7 +1,7 @@
 ---- Notas (Copia de documento de instalación de SuiteScript) ----
 
 - Videos
-    - https://youtu.be/11srr2u2JRE?feature=shared
+    - Cómo Instalar Apache Spark y PySpark en Windows | Guía Completa Paso a Paso ----> https://youtu.be/11srr2u2JRE?feature=shared
 
 - Instalacion de Apache Spark y PySpark
     - Prerequisitios
